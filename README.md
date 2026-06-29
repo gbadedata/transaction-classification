@@ -136,5 +136,3 @@ jupyter notebook transaction_classification.ipynb
 - **Label noise and overlap** remain (several near-synonymous transfer and retail categories).
 - **Narrow window** (four months, 880 mostly US-style accounts), so merchant and category coverage is partial.
 - **A linear baseline by design.** Production categorisation uses transformers over transaction text; this is the interpretable model to beat.
-
-*Built as a portfolio project. Data provenance is unverified and stated as such.*
