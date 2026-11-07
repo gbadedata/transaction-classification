@@ -2,3 +2,13 @@ __pycache__/
 .ipynb_checkpoints/
 *.pyc
 .DS_Store
+
+# The original dataset is not redistributed; keep local copies out of git
+data/bank_transactions.csv
+data/*.parquet
+
+# Local runs
+out/
+.venv/
+.pytest_cache/
+.ruff_cache/

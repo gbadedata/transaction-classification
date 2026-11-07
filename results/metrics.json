@@ -1,0 +1,216 @@
+{
+  "data": "bank_transactions.csv",
+  "raw_transactions": 258779,
+  "labelled_transactions": 229130,
+  "clients": 880,
+  "categories": 31,
+  "random_split": {
+    "baseline": {
+      "accuracy": 0.1253,
+      "macro_f1": 0.0072
+    },
+    "svm_text_amount": {
+      "accuracy": 0.9072,
+      "macro_f1": 0.7967
+    },
+    "text_only_comparison": {
+      "Complement NB": {
+        "accuracy": 0.8373,
+        "macro_f1": 0.7427
+      },
+      "Logistic (SGD)": {
+        "accuracy": 0.8168,
+        "macro_f1": 0.7023
+      },
+      "Linear SVM": {
+        "accuracy": 0.8803,
+        "macro_f1": 0.774
+      }
+    },
+    "routing": {
+      "70%": 0.9917,
+      "80%": 0.9821,
+      "90%": 0.9598
+    }
+  },
+  "client_split": {
+    "train_customers": 657,
+    "test_customers": 220,
+    "test_transactions": 16088,
+    "categories_in_test": 25,
+    "categories_without_test_customers": [
+      "ATM",
+      "Gyms and Fitness Centers",
+      "Interest",
+      "Payment",
+      "Tax Refund",
+      "Transfer Debit"
+    ],
+    "svm_text_amount": {
+      "accuracy": 0.8728,
+      "macro_f1": 0.6495
+    },
+    "routing": {
+      "70%": 0.9872,
+      "80%": 0.9674,
+      "90%": 0.9354
+    }
+  },
+  "per_class_f1_on_test_categories": {
+    "Arts and Entertainment": {
+      "random_split": 0.873,
+      "unseen_customers": 0.667,
+      "unseen_test_rows": 6,
+      "drop": 0.206
+    },
+    "Bank Fees": {
+      "random_split": 0.992,
+      "unseen_customers": 0.964,
+      "unseen_test_rows": 106,
+      "drop": 0.028
+    },
+    "Check Deposit": {
+      "random_split": 0.926,
+      "unseen_customers": 0.957,
+      "unseen_test_rows": 46,
+      "drop": -0.031
+    },
+    "Clothing and Accessories": {
+      "random_split": 0.593,
+      "unseen_customers": 0.75,
+      "unseen_test_rows": 180,
+      "drop": -0.157
+    },
+    "Convenience Stores": {
+      "random_split": 0.824,
+      "unseen_customers": 0.5,
+      "unseen_test_rows": 15,
+      "drop": 0.324
+    },
+    "Department Stores": {
+      "random_split": 0.663,
+      "unseen_customers": 0.814,
+      "unseen_test_rows": 30,
+      "drop": -0.151
+    },
+    "Digital Entertainment": {
+      "random_split": 0.911,
+      "unseen_customers": 0.746,
+      "unseen_test_rows": 52,
+      "drop": 0.165
+    },
+    "Food and Beverage Services": {
+      "random_split": 0.568,
+      "unseen_customers": 0.135,
+      "unseen_test_rows": 6,
+      "drop": 0.433
+    },
+    "Gas Stations": {
+      "random_split": 0.711,
+      "unseen_customers": 0.11,
+      "unseen_test_rows": 20,
+      "drop": 0.6
+    },
+    "Healthcare": {
+      "random_split": 0.412,
+      "unseen_customers": 0.0,
+      "unseen_test_rows": 4,
+      "drop": 0.412
+    },
+    "Insurance": {
+      "random_split": 0.927,
+      "unseen_customers": 0.667,
+      "unseen_test_rows": 16,
+      "drop": 0.26
+    },
+    "Internal Account Transfer": {
+      "random_split": 0.985,
+      "unseen_customers": 0.981,
+      "unseen_test_rows": 2073,
+      "drop": 0.003
+    },
+    "Loans": {
+      "random_split": 0.958,
+      "unseen_customers": 0.94,
+      "unseen_test_rows": 3075,
+      "drop": 0.019
+    },
+    "Payroll": {
+      "random_split": 0.954,
+      "unseen_customers": 0.839,
+      "unseen_test_rows": 2200,
+      "drop": 0.115
+    },
+    "Restaurants": {
+      "random_split": 0.891,
+      "unseen_customers": 0.495,
+      "unseen_test_rows": 455,
+      "drop": 0.396
+    },
+    "Service": {
+      "random_split": 0.385,
+      "unseen_customers": 0.042,
+      "unseen_test_rows": 36,
+      "drop": 0.344
+    },
+    "Shops": {
+      "random_split": 0.908,
+      "unseen_customers": 0.708,
+      "unseen_test_rows": 114,
+      "drop": 0.201
+    },
+    "Supermarkets and Groceries": {
+      "random_split": 0.905,
+      "unseen_customers": 0.783,
+      "unseen_test_rows": 36,
+      "drop": 0.122
+    },
+    "Telecommunication Services": {
+      "random_split": 0.698,
+      "unseen_customers": 0.843,
+      "unseen_test_rows": 36,
+      "drop": -0.145
+    },
+    "Third Party": {
+      "random_split": 0.987,
+      "unseen_customers": 0.966,
+      "unseen_test_rows": 1944,
+      "drop": 0.021
+    },
+    "Transfer": {
+      "random_split": 0.935,
+      "unseen_customers": 0.844,
+      "unseen_test_rows": 81,
+      "drop": 0.091
+    },
+    "Transfer Credit": {
+      "random_split": 0.959,
+      "unseen_customers": 0.877,
+      "unseen_test_rows": 4305,
+      "drop": 0.082
+    },
+    "Transfer Deposit": {
+      "random_split": 0.963,
+      "unseen_customers": 0.919,
+      "unseen_test_rows": 1177,
+      "drop": 0.043
+    },
+    "Travel": {
+      "random_split": 0.598,
+      "unseen_customers": 0.222,
+      "unseen_test_rows": 51,
+      "drop": 0.376
+    },
+    "Utilities": {
+      "random_split": 0.886,
+      "unseen_customers": 0.472,
+      "unseen_test_rows": 24,
+      "drop": 0.414
+    }
+  },
+  "single_customer_categories": {
+    "ATM": 5672,
+    "Payment": 41,
+    "Transfer Debit": 15114
+  }
+}
