@@ -1,0 +1,32 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check .
+      - name: Sample data is reproducible
+        run: |
+          python scripts/make_sample_data.py
+          git diff --exit-code data/sample_transactions.csv
+      - name: Tests
+        run: python -m pytest -q
+      - name: End-to-end run on the synthetic sample
+        run: python analysis.py --data data/sample_transactions.csv --figures out/figures --results out/metrics.json
