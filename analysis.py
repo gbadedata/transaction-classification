@@ -42,6 +42,8 @@ from txnclass.pipeline import (
     coverage_curve,
     decision_confidence,
     random_split,
+    routing_at_threshold,
+    threshold_for_coverage,
     validate_columns,
 )
 
@@ -258,6 +260,31 @@ def main(argv=None) -> int:
           f"macro-F1 {g_scores['macro_f1']:.3f} (over categories present in the test customers)")
     for c in COVERAGES:
         print(f"  auto-classify {c:.0%} -> accuracy {accuracy_at_coverage(g_conf, g_correct, c):.1%}")
+    # ---------------- FIXED ROUTING THRESHOLD, SET ON VALIDATION CUSTOMERS ----------------
+    # The coverage figures above rank the test set's own confidence scores, which a deployed system
+    # cannot do. Here the margin threshold is fixed on separate validation customers (held out from
+    # the training customers), then applied unchanged to the unseen test customers.
+    v_train, v_val = client_split(g_train, test_size=0.2)
+    v = build_features(v_train, v_val)
+    v_clf = fit_svm(v.X_train, v.y_train)
+    v_conf = decision_confidence(v_clf.decision_function(v.X_test))
+    vt = build_features(v_train, g_test)
+    t_pred = v_clf.predict(vt.X_test)
+    t_conf = decision_confidence(v_clf.decision_function(vt.X_test))
+    t_correct = t_pred == vt.y_test
+    fixed = {"validation_customers": int(v_val["client_id"].nunique()),
+             "model_training_customers": int(v_train["client_id"].nunique()),
+             "test_accuracy_all": round(float(t_correct.mean()), 4)}
+    print(f"\nFixed routing threshold set on {fixed['validation_customers']} validation customers, "
+          f"applied to the {g_test['client_id'].nunique()} unseen test customers "
+          f"(model trained on {fixed['model_training_customers']} customers, test accuracy {t_correct.mean():.1%}):")
+    for c in COVERAGES:
+        r = routing_at_threshold(t_conf, t_correct, threshold_for_coverage(v_conf, c))
+        fixed[f"target_{c:.0%}"] = r
+        acc = f"{r['accuracy']:.1%}" if r["accuracy"] is not None else "n/a"
+        print(f"  target {c:.0%} -> auto-classifies {r['realised_coverage']:.1%} of test rows at accuracy {acc}")
+    metrics["client_split"]["routing_fixed_threshold"] = fixed
+
     print("Largest per-category drops for new customers (categories with 50+ test rows):")
     big = per_class[per_class["unseen_test_rows"] >= 50].sort_values("drop", ascending=False)
     for k, r in big.head(6).iterrows():

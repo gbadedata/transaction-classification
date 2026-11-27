@@ -133,3 +133,30 @@ def coverage_curve(confidence: np.ndarray, correct: np.ndarray):
     ordered = np.asarray(correct)[order]
     n = np.arange(1, len(order) + 1)
     return n / len(order), np.cumsum(ordered) / n
+
+
+def threshold_for_coverage(confidence: np.ndarray, coverage: float) -> float:
+    """Confidence cut-off that auto-classifies the most-confident `coverage` share of `confidence`.
+
+    Set it on validation data, then apply it unchanged to new data: the share it auto-classifies
+    there (the realised coverage) will differ from the target, and that difference is worth reporting.
+    """
+    if not 0 < coverage <= 1:
+        raise ValueError("coverage must be in (0, 1]")
+    conf = np.sort(np.asarray(confidence))[::-1]
+    k = int(coverage * len(conf))
+    if k == 0:
+        raise ValueError("coverage selects no predictions")
+    return float(conf[k - 1])
+
+
+def routing_at_threshold(confidence: np.ndarray, correct: np.ndarray, threshold: float) -> dict:
+    """Realised coverage and accuracy when every prediction with confidence >= threshold is auto-classified."""
+    conf = np.asarray(confidence)
+    auto = conf >= threshold
+    n_auto = int(auto.sum())
+    return {"threshold": round(float(threshold), 4),
+            "realised_coverage": round(float(n_auto / len(conf)), 4),
+            "accuracy": round(float(np.asarray(correct)[auto].mean()), 4) if n_auto else None,
+            "auto_classified": n_auto}
+
