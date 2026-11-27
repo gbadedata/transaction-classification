@@ -14,6 +14,8 @@ from txnclass.pipeline import (
     coverage_curve,
     decision_confidence,
     random_split,
+    routing_at_threshold,
+    threshold_for_coverage,
     validate_columns,
 )
 
@@ -164,3 +166,20 @@ def test_macro_f1_ignores_categories_absent_from_the_test_set():
     s = analysis.scores(y_true, y_pred)
     assert s["accuracy"] == 0.75
     assert s["macro_f1"] == pytest.approx((2 / 3 + 1.0) / 2, abs=1e-4)  # averaged over a and b only
+
+
+def test_threshold_for_coverage_selects_target_share():
+    conf = np.array([0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0])
+    t = threshold_for_coverage(conf, 0.8)
+    assert t == 0.2
+    assert (conf >= t).mean() == 0.8
+
+
+def test_routing_at_threshold_reports_realised_coverage_and_accuracy():
+    conf = np.array([0.9, 0.8, 0.1, 0.05])
+    correct = np.array([True, False, True, True])
+    r = routing_at_threshold(conf, correct, 0.5)
+    assert r["realised_coverage"] == 0.5
+    assert r["accuracy"] == 0.5
+    assert r["auto_classified"] == 2
+    assert routing_at_threshold(conf, correct, 2.0)["accuracy"] is None
