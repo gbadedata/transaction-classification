@@ -54,6 +54,29 @@
       "70%": 0.9872,
       "80%": 0.9674,
       "90%": 0.9354
+    },
+    "routing_fixed_threshold": {
+      "validation_customers": 132,
+      "model_training_customers": 525,
+      "test_accuracy_all": 0.8645,
+      "target_70%": {
+        "threshold": 1.4696,
+        "realised_coverage": 0.6799,
+        "accuracy": 0.9858,
+        "auto_classified": 10938
+      },
+      "target_80%": {
+        "threshold": 1.0054,
+        "realised_coverage": 0.7877,
+        "accuracy": 0.9681,
+        "auto_classified": 12672
+      },
+      "target_90%": {
+        "threshold": 0.4782,
+        "realised_coverage": 0.8752,
+        "accuracy": 0.9385,
+        "auto_classified": 14080
+      }
     }
   },
   "per_class_f1_on_test_categories": {

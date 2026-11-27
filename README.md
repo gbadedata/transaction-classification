@@ -26,6 +26,7 @@ Open Banking lending rests on one unglamorous capability: taking a feed of noisy
 
 - The model learns sensible merchant signals with no hand-coded rules: *mcdonald / starbucks* for **Restaurants**, *kroger / publix* for **Supermarkets**, *uber / lyft* for **Payroll** (gig income).
 - Auto-classifying the most-confident 80% of transactions reaches **98.2% accuracy** on the random split and **96.7% on unseen customers**.
+- With the confidence cut-off **fixed in advance on separate validation customers** (as it would be in production), a target of 80% auto-classifies **78.8%** of unseen customers' transactions at **96.8% accuracy**.
 - Accuracy holds up for new customers; **macro-F1 drops from 0.80 to 0.65**, because the rarer categories depend heavily on a few customers. The random split overstates how well the long tail generalises. Section 7 explains why.
 
 ---
@@ -121,6 +122,18 @@ Ranking predictions by the model's confidence (the gap between its top two class
 
 Confidence routing degrades gracefully: the uncertain cases are exactly the ones a human should see, and that holds when customers change.
 
+### Fixing the cut-off before seeing the test customers
+
+The table above ranks each test set's own predictions and cuts at exactly 70%, 80% or 90%, so the cut-off is chosen on the data being scored. A deployed system has to fix a confidence threshold in advance. To test that, 132 of the training customers are held back as **validation customers**: the model is trained on the other 525, the threshold that auto-classifies the target share of the validation customers' transactions is fixed, and that threshold is applied unchanged to the 220 unseen test customers.
+
+| Target coverage | Threshold (score margin) | Coverage achieved on test customers | Accuracy on auto-classified |
+|---|---|---|---|
+| 70% | 1.47 | 68.0% | 98.6% |
+| 80% | 1.01 | 78.8% | 96.8% |
+| 90% | 0.48 | 87.5% | 93.8% |
+
+The fixed threshold lands slightly short of its target coverage on new customers (the model is a little less confident on them), while accuracy on what it does auto-classify matches the ranked figures. In practice the threshold would be monitored and reset as the customer base changes. Overall accuracy for this smaller 525-customer model on the test customers is 86.4%. These numbers are in `client_split.routing_fixed_threshold` in [`results/metrics.json`](results/metrics.json).
+
 ---
 
 ## The data
@@ -161,4 +174,5 @@ Figures go to `out/figures/` and metrics to `out/metrics.json` unless you point 
 - **Undocumented provenance.** The source does not say where the data came from, so this is a realistic portfolio exercise, not a citable benchmark.
 - **Labels are aggregator-assigned**, so the model learns to reproduce a categorisation engine's output, not an independent ground truth, and some categories are effectively one customer's labelling.
 - **Thin merchant coverage.** Four months and 880 mostly US-style customers; many merchants appear for only a handful of customers, which limits generalisation to new ones.
+- **Routing cut-offs.** The ranked coverage table in section 8 cuts each test set at its own percentiles; only the fixed-threshold table uses a cut-off set beforehand, so quote that one for deployment. It also uses a smaller training set (525 customers), so its numbers are not directly comparable with the 657-customer model.
 - **A linear baseline by design.** Production categorisation uses richer text models and merchant databases; this is the interpretable model to beat, and the customer-level split is the evaluation any replacement should be held to.
